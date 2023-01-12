@@ -49,7 +49,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication"
     ],
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAdminUser"],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
 }
 
 MIDDLEWARE = [
@@ -89,8 +89,8 @@ WSGI_APPLICATION = 'template.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "citi",
-        "USER": "iosue",
+        "NAME": "testdb",
+        "USER": "testuser",
         "PASSWORD": "password",
         "HOST": "localhost",
         "PORT": "",
