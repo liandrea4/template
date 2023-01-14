@@ -4,6 +4,8 @@ node_modules/
 __pycache__/
 *.pyc
 
+.env
+
 .DS_Store
 main.js.LICENSE.txt
 frontend/static/frontend/main.js

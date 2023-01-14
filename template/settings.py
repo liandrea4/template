@@ -11,22 +11,40 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-import os
+from dotenv import load_dotenv
+import dj_database_url
+from environs import Env
+
+env = Env()
+env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-a!5eang5ajg@p=qbr$ravmim8^a$#5*d+9ip_4#&wf=467=d%4'
+# SECRET_KEY = 'django-insecure-a!5eang5ajg@p=qbr$ravmim8^a$#5*d+9ip_4#&wf=467=d%4'
+# SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = env.str("SECRET_KEY")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+# DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
+DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = []
+
+# ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", 'iosue-template.fly.dev']
+# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
+# CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS').split(' ')
+CSRF_TRUSTED_ORIGINS = ["https://iosue-template.fly.dev"]
 
 
 # Application definition
@@ -42,6 +60,7 @@ INSTALLED_APPS = [
     'frontend',
     "rest_framework",
     "rest_framework.authtoken",
+    'whitenoise.runserver_nostatic',
 
 ]
 
@@ -60,7 +79,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # new
+
 
 ROOT_URLCONF = 'template.urls'
 
@@ -86,27 +109,30 @@ WSGI_APPLICATION = 'template.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "testdb",
+#         "USER": "testuser",
+#         "PASSWORD": "password",
+#         "HOST": "localhost",
+#         "PORT": "",
+#     }
+# }
+# if os.environ.get("GITHUB_WORKFLOW"):
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql",
+#             "NAME": "github_actions",
+#             "USER": "postgres",
+#             "PASSWORD": "postgres",
+#             "HOST": "127.0.0.1",
+#             "PORT": "5432",
+#         }
+#     }
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "testdb",
-        "USER": "testuser",
-        "PASSWORD": "password",
-        "HOST": "localhost",
-        "PORT": "",
-    }
+    "default": env.dj_db_url("DATABASE_URL", default="sqlite:///db.sqlite3"),
 }
-if os.environ.get("GITHUB_WORKFLOW"):
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": "github_actions",
-            "USER": "postgres",
-            "PASSWORD": "postgres",
-            "HOST": "127.0.0.1",
-            "PORT": "5432",
-        }
-    }
 
 
 # Password validation
@@ -144,6 +170,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
