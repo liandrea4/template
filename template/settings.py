@@ -11,17 +11,18 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-from dotenv import load_dotenv
 import dj_database_url
 from environs import Env
+
+# from dotenv import load_dotenv
+# load_dotenv(BASE_DIR / '.env')
+
 
 env = Env()
 env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -30,6 +31,8 @@ load_dotenv(BASE_DIR / '.env')
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-a!5eang5ajg@p=qbr$ravmim8^a$#5*d+9ip_4#&wf=467=d%4'
 # SECRET_KEY = os.getenv('SECRET_KEY')
+
+
 SECRET_KEY = env.str("SECRET_KEY")
 
 
@@ -56,7 +59,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
+    "api.apps.ApiConfig",
     'frontend',
     "rest_framework",
     "rest_framework.authtoken",
